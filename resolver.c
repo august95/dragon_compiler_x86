@@ -290,7 +290,7 @@ struct resolver_entity* resolver_create_new_unknown_entity(struct resolver_resul
 struct resolver_entity* resolver_create_new_unary_indirection_entity(struct resolver_result* result, struct resolver_process* process, struct node* node, int indirection_depth)
 {
     struct resolver_entity * entity = resolver_create_new_entity(result, RESOLVER_ENTITY_TYPE_UNARY_INDIRECTION, NULL);
-    if(entity)
+    if(!entity)
     {
         return NULL;
     }

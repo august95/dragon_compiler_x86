@@ -131,6 +131,7 @@ bool asm_datatype_back(struct datatype *dtype_out);
 void codegen_generate_entity_access_for_unary_get_address(struct resolver_result* result, struct resolver_entity* entity);
 void codegen_generate_entity_access_for_unary_indirection_for_assignment_left_operand(struct resolver_result* result, struct resolver_entity* entity, struct history* history);
 void codegen_generate_entity_access_for_unary_indirection(struct resolver_result* result, struct resolver_entity* entity, struct history* history);
+void codegen_generate_entity_access_for_unsupported(struct resolver_result* result, struct resolver_entity* entity);
 
 
 void codegen_new_scope(int flags)
@@ -943,7 +944,7 @@ void codegen_generate_entity_access_for_entity_assignemnt_left_operand(struct re
         codegen_generate_entity_access_for_unary_get_address(result, entity);
         break;
     case RESOLVER_ENTITY_TYPE_UNSUPPORTED:
-#warning "implement unsupported "
+        codegen_generate_entity_access_for_unsupported(result, entity);
         break;
     case RESOLVER_ENTITY_TYPE_CAST:
 #warning "implement cast"
@@ -1002,6 +1003,11 @@ void codegen_generate_entity_access_for_unary_indirection_for_assignment_left_op
     int depth = entity->indirection.depth -1;
     codegen_apply_unary_access(depth);
     asm_push_ins_push_with_flags("ebx", STACK_FRAME_ELEMENT_TYPE_PUSHED_VALUE, "result_value", STACK_FRAME_ELEMENT_FLAG_IS_PUSHED_ADDRESS);
+}
+
+void codegen_generate_entity_access_for_unsupported(struct resolver_result* result, struct resolver_entity* entity)
+{
+    codegen_generate_expressionable(entity->node, history_begin(0));
 }
 
 void codegen_generate_entity_access_for_assignment_left_operand(struct resolver_result *result, struct resolver_entity *root_assignment_entity, struct node *top_most_node, struct history *history)
@@ -1137,7 +1143,7 @@ void codegen_generate_entity_access_for_entity(struct resolver_result *result, s
         break;
 
     case RESOLVER_ENTITY_TYPE_UNSUPPORTED:
-#warning "unsupported"
+        codegen_generate_entity_access_for_unsupported(result, entity);
         break;
 
     case RESOLVER_ENTITY_TYPE_CAST:

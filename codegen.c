@@ -255,6 +255,20 @@ void asm_pop_ebp()
     asm_push_ins_pop("ebp", STACK_FRAME_ELEMENT_TYPE_SAVED_BP, "function_entry_saved_ebp");
 }
 
+void codegen_generate_add_no_compile_time_stack_frame_restore(size_t stack_size)
+{
+    if(stack_size != 0)
+    {
+        asm_push("add esp %lld", stack_size);
+    }
+}
+
+void asm_pop_ebp_no_stack_frame_restore()
+{
+    asm_push("pop ebp");
+}
+
+
 void codegen_stack_sub_with_name(size_t stack_size, const char *name)
 {
     if (stack_size != 0)
@@ -1663,6 +1677,36 @@ void codegen_generate_structure_push(struct resolver_entity* entity, struct hist
     codegen_response_acknowledge(RESPONSE_SET(.flags=RESPONSE_FLAG_PUSHED_STRUCTURE));
 }
 
+void codegen_generate_statement_return_exp(struct node *node)
+{
+    codegen_response_expect();
+    codegen_generate_expressionable(node->stmt.return_stmt.exp, history_begin(IS_STATEMENT_RETURN));
+    struct datatype dtype;
+    assert(asm_datatype_back(&dtype));
+    if(datatype_is_struct_or_union_none_pointer(&dtype))
+    {
+        asm_push("mov edx, [ebp+8]");
+        codegen_generate_move_struct(&dtype, "edx", 0);
+        asm_push("mov eax, [ebp+8]");
+        return;
+    }
+
+    asm_push_ins_pop("ebx", STACK_FRAME_ELEMENT_TYPE_PUSHED_VALUE, "result_value");
+}
+
+
+void codegen_generate_statement_return(struct node *node)
+{
+    if(node->stmt.return_stmt.exp)
+    {
+        codegen_generate_statement_return_exp(node);
+    }
+
+    codegen_generate_add_no_compile_time_stack_frame_restore(C_ALIGN(function_node_stack_size(node->binded.function)));
+    asm_pop_ebp_no_stack_frame_restore();
+    asm_push("ret");
+}
+
 void codegen_generate_statement(struct node *node, struct history *history)
 {
     switch (node->type)
@@ -1677,6 +1721,10 @@ void codegen_generate_statement(struct node *node, struct history *history)
 
     case NODE_TYPE_VARIABLE:
         codegen_generate_scope_variable(node);
+        break;
+
+    case NODE_TYPE_STATEMENT_RETURN:
+        codegen_generate_statement_return(node);
         break;
     }
     codegen_discard_unused_stack();

@@ -1671,6 +1671,10 @@ void codegen_generate_statement(struct node *node, struct history *history)
         codegen_generate_exp_node(node, history_begin(history->flags));
         break;
 
+    case NODE_TYPE_UNARY:   
+        codegen_generate_unary(node, history_begin(history->flags));
+        break;
+
     case NODE_TYPE_VARIABLE:
         codegen_generate_scope_variable(node);
         break;

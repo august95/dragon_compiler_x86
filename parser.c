@@ -1410,6 +1410,7 @@ void parse_struct_no_new_scope(struct datatype* dtype, bool is_forward_declarati
         dtype->size= body_node->body.size;
     }
 
+    dtype->struct_node = struct_node;
     if(token_is_identifier(token_peek_next()))
     {
         struct token* var_name = token_next();

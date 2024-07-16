@@ -233,7 +233,7 @@ bool is_access_operator(const char* op)
 
 bool is_access_node(struct node* node)
 {
-    return node->type = NODE_TYPE_EXPRESSION && is_access_operator(node->exp.op);
+    return node->type == NODE_TYPE_EXPRESSION && is_access_operator(node->exp.op);
 }
 
 bool is_array_operator(const char* op)

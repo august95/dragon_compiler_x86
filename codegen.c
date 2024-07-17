@@ -132,7 +132,8 @@ void codegen_generate_entity_access_for_unary_get_address(struct resolver_result
 void codegen_generate_entity_access_for_unary_indirection_for_assignment_left_operand(struct resolver_result* result, struct resolver_entity* entity, struct history* history);
 void codegen_generate_entity_access_for_unary_indirection(struct resolver_result* result, struct resolver_entity* entity, struct history* history);
 void codegen_generate_entity_access_for_unsupported(struct resolver_result* result, struct resolver_entity* entity);
-
+void codegen_generate_body(struct node *node, struct history *history);
+int codegen_label_count();
 
 void codegen_new_scope(int flags)
 {
@@ -633,7 +634,7 @@ void codegen_gen_mem_access(struct node *node, int flags,  struct resolver_entit
         asm_push_ins_pop("ebx", STACK_FRAME_ELEMENT_TYPE_PUSHED_VALUE, "result_value");
         codegen_generate_structure_push_or_return(entity, history_begin(0), 0);
     }
-    if (datatype_element_size(&entity->dtype) != DATA_SIZE_DWORD)
+    else if (datatype_element_size(&entity->dtype) != DATA_SIZE_DWORD)
     {
         asm_push("mov eax, [%s]", codegen_entity_private(entity)->address);
         codegen_reduce_register("eax", datatype_element_size(&entity->dtype), entity->dtype.flags & DATATYPE_FLAG_IS_SIGNED);
@@ -1707,6 +1708,52 @@ void codegen_generate_statement_return(struct node *node)
     asm_push("ret");
 }
 
+void _codegen_generate_if_stmt(struct node* node, int end_label_id);
+
+void codegen_generate_else_statement(struct node* node)
+{
+    codegen_generate_body(node->stmt.else_stmt.body_node, history_begin(0));
+}
+
+void codegen_generate_else_or_else_if(struct node* node, int end_label_id)
+{
+    if(node->type == NODE_TYPE_STATEMENT_IF)
+    {
+        _codegen_generate_if_stmt(node, end_label_id);
+    }
+    else if (node->type == NODE_TYPE_STATEMENT_ELSE)
+    {
+        codegen_generate_else_statement(node);
+    }
+    else
+    {
+        compiler_error(current_process, "Unexpected compiler bug");
+    }
+}
+
+void _codegen_generate_if_stmt(struct node* node, int end_label_id)
+{
+    int if_label_id = codegen_label_count();
+    codegen_generate_expressionable(node->stmt.if_stmt.cond_node, history_begin(0));
+    asm_push_ins_pop("eax", STACK_FRAME_ELEMENT_TYPE_PUSHED_VALUE, "result_value");
+    asm_push("cmp eax, 0");
+    asm_push("je .if_%i", if_label_id);
+    codegen_generate_body(node->stmt.if_stmt.body_node, history_begin(IS_ALONE_STATEMENT));
+    asm_push("jmp .if_end_%i", end_label_id);
+    asm_push(".if_%i:", if_label_id);
+    if(node->stmt.if_stmt.next)
+    {
+        codegen_generate_else_or_else_if(node->stmt.if_stmt.next, end_label_id);
+    }
+}
+
+void codegen_generate_if_stmt(struct node* node)
+{
+    int end_label_id = codegen_label_count();
+    _codegen_generate_if_stmt(node, end_label_id);
+    asm_push(".if_end_%i:", end_label_id);
+}
+
 void codegen_generate_statement(struct node *node, struct history *history)
 {
     switch (node->type)
@@ -1721,6 +1768,10 @@ void codegen_generate_statement(struct node *node, struct history *history)
 
     case NODE_TYPE_VARIABLE:
         codegen_generate_scope_variable(node);
+        break;
+
+    case NODE_TYPE_STATEMENT_IF:
+        codegen_generate_if_stmt(node);
         break;
 
     case NODE_TYPE_STATEMENT_RETURN:

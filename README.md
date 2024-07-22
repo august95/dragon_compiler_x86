@@ -1,4 +1,4 @@
-C Compiler
+Dragon compiler - for 32 bit x86 architecture. Compiles a subset of C, preprocessor is not implemented
 
 The compiled file is defined in main.c. The compiler will compile test.c by default.
 

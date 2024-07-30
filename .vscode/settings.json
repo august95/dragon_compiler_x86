@@ -1,9 +1,0 @@
-{
-    "files.associations": {
-        "stdio.h": "c",
-        "compiler.h": "c",
-        "stdbool.h": "c",
-        "assert.h": "c",
-        "vector.h": "c"
-    }
-}

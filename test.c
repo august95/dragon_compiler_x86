@@ -1,7 +1,10 @@
 int main()
 {
-    int* p;
-    int b;
-    p = &b;
+
+    int a = 1;
+    for (int i = 0 ; i < 5; i++)
+    {
+
+    }
 
 }

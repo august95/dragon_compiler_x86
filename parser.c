@@ -1708,7 +1708,8 @@ bool parse_for_loop_part(struct history *history)
         token_next();
         return false;
     }
-    parse_expressionable_root(history);
+    //todo: creat separate function for parsing init part of for loop and call parse_variable_function_or_struct_union 
+    parse_expressionable_root(history); 
     expect_sym(';');
     return true;
 }
@@ -1745,6 +1746,8 @@ void parse_for_stmt(struct history *history)
     if(pare_for_loop_part_loop(history))
     {
         loop_node = node_pop();
+        //FIXME: expects ';' at end of last stmt: for(;; i < 5 ;)
+        
     }
     expect_sym(')');
 
@@ -1909,7 +1912,6 @@ int parse_expressionable_single(struct history *history)
 
     case TOKEN_TYPE_OPERATOR:
         parse_exp(history);
-        res = 0;
         break;
 
     case TOKEN_TYPE_KEYWORD:

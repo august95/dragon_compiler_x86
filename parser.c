@@ -1008,7 +1008,7 @@ void make_variable_node_and_register(struct history* history, struct datatype* d
 }
 
 void make_variable_list_node(struct vector* var_list_vec)
-{
+
     node_create(&(struct node){.type=NODE_TYPE_VARIABLE_LIST,.var_list.list=var_list_vec});
 }
 
@@ -1716,6 +1716,7 @@ bool parse_for_loop_part(struct history *history)
         return false;
     }
     //todo: creat separate function for parsing init part of for loop and call parse_variable_function_or_struct_union 
+    // fixme: code generation does not handle allocation of scope variable withing for contex
     history->flags |= HISTORY_FLAG_IS_FOR_LOOP_INIT_STMT;
     parse_expressionable_root(history); 
     expect_sym(';');

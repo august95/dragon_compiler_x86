@@ -6,13 +6,14 @@
 
 enum 
 {
-    HISTORY_FLAG_INSIDE_UNION               = 0b00000001,
-    HISTORY_FLAG_IS_UPWARD_STACK            = 0b00000010,
-    HISTORY_FLAG_IS_GLOBAL_SCOPE            = 0b00000100,
-    HISTORY_FLAG_INSIDE_STRUCTURE           = 0b00001000,
-    HISTORY_FLAG_INSIDE_FUNCTION            = 0b00010000,
-    HISTORY_FLAG_INSIDE_SWITCH_STATEMENT    = 0b00100000,
-    HISTORY_FLAG_PARANTHESES_IS_NOT_A_FUNCTION= 0b01000000
+    HISTORY_FLAG_INSIDE_UNION                 = 0b00000001,
+    HISTORY_FLAG_IS_UPWARD_STACK              = 0b00000010,
+    HISTORY_FLAG_IS_GLOBAL_SCOPE              = 0b00000100,
+    HISTORY_FLAG_INSIDE_STRUCTURE             = 0b00001000,
+    HISTORY_FLAG_INSIDE_FUNCTION              = 0b00010000,
+    HISTORY_FLAG_INSIDE_SWITCH_STATEMENT      = 0b00100000,
+    HISTORY_FLAG_PARANTHESES_IS_NOT_A_FUNCTION= 0b01000000,
+    HISTORY_FLAG_IS_FOR_LOOP_INIT_STMT        = 0b10000000
 };
 
 struct history_cases
@@ -1578,6 +1579,12 @@ void parse_variable_function_or_struct_union(struct history *history)
         make_variable_list_node(var_list);
     }
 
+    if(history->flags & HISTORY_FLAG_IS_FOR_LOOP_INIT_STMT)
+    {
+        //if ';' is poped the parser will continue to parse for loop 2 statement. Let parse_for_loop_part handle this
+        return;
+    }
+
     expect_sym(';');
 }
 
@@ -1709,6 +1716,7 @@ bool parse_for_loop_part(struct history *history)
         return false;
     }
     //todo: creat separate function for parsing init part of for loop and call parse_variable_function_or_struct_union 
+    history->flags |= HISTORY_FLAG_IS_FOR_LOOP_INIT_STMT;
     parse_expressionable_root(history); 
     expect_sym(';');
     return true;
@@ -1746,7 +1754,6 @@ void parse_for_stmt(struct history *history)
     if(pare_for_loop_part_loop(history))
     {
         loop_node = node_pop();
-        //FIXME: expects ';' at end of last stmt: for(;; i < 5 ;)
         
     }
     expect_sym(')');

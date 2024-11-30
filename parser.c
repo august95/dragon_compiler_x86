@@ -1157,7 +1157,7 @@ void token_read_dots(size_t amount)
 void parse_variable_full(struct history* history)
 {
     struct datatype dtype;
-    parse_datatype_type(&dtype);
+    parse_datatype(&dtype);
 
     struct token* name_token = NULL;
 

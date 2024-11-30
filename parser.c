@@ -1008,7 +1008,7 @@ void make_variable_node_and_register(struct history* history, struct datatype* d
 }
 
 void make_variable_list_node(struct vector* var_list_vec)
-
+{
     node_create(&(struct node){.type=NODE_TYPE_VARIABLE_LIST,.var_list.list=var_list_vec});
 }
 

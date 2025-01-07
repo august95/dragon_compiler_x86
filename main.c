@@ -51,7 +51,7 @@ int main(int argc, char** argv)
         int res = system(nasm_cmd);
         if (res < 0)
         {
-            printf("Issue assemblign the assembly file with NASM and linking with gcc");
+            printf("Issue when trying to assemble the assembly file with NASM and linking with gcc");
             return res;
         }
 

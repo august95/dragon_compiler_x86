@@ -1143,7 +1143,27 @@ void codegen_generate_entity_access_for_function_call(struct resolver_result *re
         codegen_generate_expressionable(node, history_begin(EXPRESSION_IN_FUNCTION_CALL_ARGUMENTS));
         node = vector_peek_ptr(entity->func_call_data.arguments);
     }
-    asm_push("call ecx");
+
+    /*
+    hack to make printf work:
+
+    FIXME: add support for calling external functions.
+    ERROR: warning: relocation in read-only section `.text'
+
+    Either diable PIE or make -text relocatable, not idle.
+    */
+    const char* function_to_call = result->base.address;
+    if(!strcmp(function_to_call, "printf" ))
+    {
+        asm_push("call printf");
+    }
+    else
+    {
+        asm_push("call ecx");
+    }
+
+
+
     size_t stack_size = entity->func_call_data.stack_size;
     if (datatype_is_struct_or_union_none_pointer(&entity->dtype))
     {

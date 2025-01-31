@@ -40,11 +40,11 @@ int main(int argc, char** argv)
         sprintf(nasm_output_file, "%s.o", output_file);
         if (compile_flags & COMPILE_PROCESS_EXPORT_AS_OBJECT)
         {
-            sprintf(nasm_cmd, "nasm -f elf32 %s -o %s", output_file, nasm_output_file);
+            sprintf(nasm_cmd, "nasm -f elf32 %s -o %s -no-pie", output_file, nasm_output_file);
         }
         else
         {
-            sprintf(nasm_cmd, "nasm -f elf32 %s -o %s && gcc -m32 %s -o %s", output_file, nasm_output_file, nasm_output_file, output_file);
+            sprintf(nasm_cmd, "nasm -f elf32 %s -o %s && gcc -m32 %s -o %s -no-pie", output_file, nasm_output_file, nasm_output_file, output_file);
         }
 
         printf("%s", nasm_cmd);

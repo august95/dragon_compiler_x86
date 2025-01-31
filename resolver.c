@@ -1020,7 +1020,7 @@ void resolver_finalize_result_flags(struct resolver_process* resolver, struct re
         datatype_is_struct_or_union_none_pointer(&last_entity->dtype))
         {
             flags |= RESOLVER_RESULT_FLAG_FIST_ENTITY_LOAD_TO_EBX;
-            flags &= RESOLVER_RESULT_FLAG_FIST_ENITITY_PUSH_VALUE;
+            flags &= ~RESOLVER_RESULT_FLAG_FIST_ENITITY_PUSH_VALUE;
         }
 
         result->flags = flags;

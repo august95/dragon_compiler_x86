@@ -1,6 +1,12 @@
-int printf(const char *format, ...);
+//int printf(const char *format, ...);
+
+int test(int a)
+{
+  return a + 1;
+}
+
 
 int main()
 {
-    printf("hello world!");
+    test(30);
 }

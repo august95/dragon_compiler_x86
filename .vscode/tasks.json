@@ -1,0 +1,19 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build with Makefile",
+            "type": "shell",
+            "command": "wsl",
+            "args": [
+                "make"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [],
+            "detail": "Builds the project using Makefile in WSL"
+        }
+    ]
+}

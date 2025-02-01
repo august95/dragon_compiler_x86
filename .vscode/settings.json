@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "vector.h": "c",
+        "memory": "cpp",
+        "xstring": "cpp",
+        "compiler.h": "c"
+    }
+}

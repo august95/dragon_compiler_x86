@@ -1,0 +1,38 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "WSL Debug",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "/mnt/c/repositories/dragon_compiler_x86/main",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "/mnt/c/repositories/dragon_compiler_x86",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "/usr/bin/gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "Build with Makefile",
+            "logging" : {
+                "engineLogging" : true
+            },
+            "pipeTransport": {
+                "debuggerPath": "",
+                "pipeProgram": "C:\\Windows\\sysnative\\bash.exe",
+                "pipeArgs": ["-c", "\"/usr/bin/gdb --interpreter=mi\""],
+                "pipeCwd": ""
+            },
+            "sourceFileMap": {
+                "/mnt/c/repositories/dragon_compiler_x86" : "C:/repositories/dragon_compiler_x86"
+            }
+        }
+    ]
+}

@@ -1144,23 +1144,9 @@ void codegen_generate_entity_access_for_function_call(struct resolver_result *re
         node = vector_peek_ptr(entity->func_call_data.arguments);
     }
 
-    /*
-    hack to make printf work:
-
-    FIXME: add support for calling external functions.
-    ERROR: warning: relocation in read-only section `.text'
-
-    Either diable PIE or make -text relocatable, not idle.
-    */
     const char* function_to_call = result->base.address;
-    if(!strcmp(function_to_call, "printf" ))
-    {
-        asm_push("call printf");
-    }
-    else
-    {
-        asm_push("call ecx");
-    }
+ 
+    asm_push("call ecx");
 
 
 

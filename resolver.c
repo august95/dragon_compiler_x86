@@ -1041,7 +1041,7 @@ void resolver_finalize_result_flags(struct resolver_process* resolver, struct re
             flags &= ~RESOLVER_RESULT_FLAG_FIST_ENITITY_PUSH_VALUE - RESOLVER_RESULT_FLAG_FINAL_INDIRECTION_REQUIRED_FOR_VALUE;
             does_get_adress = true;
         }
-        if(entity->flag == RESOLVER_ENTITY_TYPE_FUNCTION_CALL)
+        if(entity->type == RESOLVER_ENTITY_TYPE_FUNCTION_CALL)
         {
             flags |= RESOLVER_RESULT_FLAG_FIST_ENTITY_LOAD_TO_EBX;
             flags &= ~RESOLVER_RESULT_FLAG_FIST_ENITITY_PUSH_VALUE;
